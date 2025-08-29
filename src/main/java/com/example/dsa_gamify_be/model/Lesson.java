@@ -1,5 +1,6 @@
 package com.example.dsa_gamify_be.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,7 +40,8 @@ public class Lesson {
     @Column(name = "created_at", insertable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<LessonImage> lessonImages = new ArrayList<>();
 
     public Lesson(){}

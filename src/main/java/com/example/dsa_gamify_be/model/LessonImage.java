@@ -1,5 +1,6 @@
 package com.example.dsa_gamify_be.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ public class LessonImage {
 
     @ManyToOne
     @JoinColumn(name = "ls_id", nullable = false, insertable = false, updatable = false)
+    @JsonBackReference
     private Lesson lesson;
 
     @Column(name = "ls_id")
