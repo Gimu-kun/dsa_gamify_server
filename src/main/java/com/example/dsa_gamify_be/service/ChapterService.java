@@ -16,4 +16,8 @@ public class ChapterService {
         Optional<Chapter> chapter = chapterRepository.findById(id);
         return chapter.map(Chapter::getDisplayName).orElse(null);
     }
+
+    public boolean isExisted(Integer id){
+        return chapterRepository.findById(id).isPresent();
+    }
 }

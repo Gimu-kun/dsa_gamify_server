@@ -39,4 +39,9 @@ public class LessonController {
     public ResponseEntity<Lesson> getById(@RequestParam String operatorId, @PathVariable String id){
         return lessonService.getById(operatorId,id);
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Lesson> updateDetail(@PathVariable String id,@RequestBody LessonUpdateRequestDto req){
+        return lessonService.updateDetail(id,req);
+    }
 }

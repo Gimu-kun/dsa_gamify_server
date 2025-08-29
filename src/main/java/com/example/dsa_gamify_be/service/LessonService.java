@@ -1,6 +1,7 @@
 package com.example.dsa_gamify_be.service;
 
 import com.example.dsa_gamify_be.dto.userDto.lesson.LessonCreationRequestDto;
+import com.example.dsa_gamify_be.dto.userDto.lesson.LessonUpdateRequestDto;
 import com.example.dsa_gamify_be.model.Lesson;
 import com.example.dsa_gamify_be.model.LessonImage;
 import com.example.dsa_gamify_be.model.User;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -22,6 +24,9 @@ public class LessonService {
 
     @Autowired
     LessonRepository lessonRepository;
+
+    @Autowired
+    ChapterService chapterService;
 
     @Autowired
     UserService userService;
@@ -57,5 +62,35 @@ public class LessonService {
         }
         Optional<Lesson> lesson = lessonRepository.findById(id);
         return lesson.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    public ResponseEntity<Lesson> updateDetail(String id, LessonUpdateRequestDto req){
+        Optional<Lesson> optLesson = lessonRepository.findById(id);
+        if (optLesson.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        Lesson lesson = optLesson.get();
+        if (req.getOperator() == null && userService.getById(req.getOperator()) != null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }else{
+            lesson.setUpdatedBy(userService.getById(req.getOperator()).getUsername());
+        }
+
+        if (req.getChapterId() != null && chapterService.isExisted(req.getChapterId())){
+            lesson.setChapterId(req.getChapterId());
+        }
+
+        if (req.getContent() != null){
+            lesson.setContent(req.getContent());
+        }
+
+        if (req.getTitle() != null && !Objects.equals(req.getTitle(), lesson.getTitle())){
+            if (lessonRepository.findByTitle(req.getTitle()).isEmpty()){
+                lesson.setTitle(req.getTitle());
+            }
+        }
+
+        lessonRepository.save(lesson);
+        return ResponseEntity.ok(lesson);
     }
 }
